@@ -4,8 +4,8 @@ plugins {
     kotlin("jvm").version(kotlinVersion)
 }
 base {
-    val archivesBaseNameTwo: String by project
-    archivesBaseName = archivesBaseNameTwo
+    val theArchivesBaseName: String by project
+    archivesBaseName = theArchivesBaseName
 }
 val modVersion: String by project
 version = modVersion
