@@ -4,8 +4,8 @@ plugins {
     kotlin("jvm").version(kotlinVersion)
 }
 base {
-    val theArchivesBaseName: String by project
-    archivesBaseName = theArchivesBaseName
+    val archivesBaseName: String by project
+    archivesName.set(archivesBaseName)
 }
 val modVersion: String by project
 version = modVersion
@@ -40,7 +40,7 @@ tasks {
     }
     jar {
         from("LICENSE") {
-            rename { "${it}_${base.archivesBaseName}" }
+            rename { "${it}_${base.archivesName}" }
         }
     }
     processResources {
