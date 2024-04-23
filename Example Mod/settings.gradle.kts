@@ -1,3 +1,4 @@
+rootProject.name = settings.extra["archives_base_name"] as String
 pluginManagement {
     repositories {
         maven("https://maven.fabricmc.net") { name = "Fabric" }
