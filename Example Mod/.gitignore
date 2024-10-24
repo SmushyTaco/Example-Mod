@@ -27,3 +27,5 @@ replay_*.log
 *.jfr
 # Kotlin
 .kotlin/
+# Static Analysis
+.PVS-Studio/
