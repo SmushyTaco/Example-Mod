@@ -1,8 +1,12 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("fabric-loom")
     kotlin("jvm")
+    id("com.modrinth.minotaur")
+    id("net.darkhax.curseforgegradle")
+    id("co.uzzu.dotenv.gradle")
 }
 base.archivesName = project.extra["archives_base_name"] as String
 version = project.extra["mod_version"] as String
@@ -42,4 +46,23 @@ tasks {
         targetCompatibility = javaVersion
         withSourcesJar()
     }
+    register<TaskPublishCurseForge>("publishCurseForge") {
+        disableVersionDetection()
+        apiToken = env.fetch("CURSEFORGE_TOKEN", "")
+        val file = upload("Replace this with the CurseForge project ID as an Integer", remapJar)
+        file.displayName = "[${project.extra["minecraft_version"] as String}] Mod Name"
+        file.addEnvironment("Client", "Server")
+        file.changelog = ""
+        file.releaseType = "release"
+        file.addModLoader("Fabric")
+        file.addGameVersion(project.extra["minecraft_version"] as String)
+    }
+}
+modrinth {
+    token.set(env.fetch("MODRINTH_TOKEN", ""))
+    projectId.set("Replace this with the slug to the Modrinth mod page")
+    uploadFile.set(tasks.remapJar)
+    gameVersions.addAll(project.extra["minecraft_version"] as String)
+    versionName.set("[${project.extra["minecraft_version"] as String}] Mod Name")
+    dependencies { required.project("fabric-api", "fabric-language-kotlin") }
 }

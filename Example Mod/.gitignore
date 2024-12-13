@@ -29,3 +29,5 @@ replay_*.log
 .kotlin/
 # Static Analysis
 .PVS-Studio/
+# Security
+.env
