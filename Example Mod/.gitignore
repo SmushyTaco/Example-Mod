@@ -1,0 +1,33 @@
+# Gradle
+.gradle/
+build/
+out/
+classes/
+# Eclipse
+*.launch
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+# Visual Studio Code
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+# macOS
+*.DS_Store
+# Fabric
+run/
+# Java
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr
+# Kotlin
+.kotlin/
+# Static Analysis
+.PVS-Studio/
+# Security
+.env
