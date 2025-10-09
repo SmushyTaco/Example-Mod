@@ -17,7 +17,6 @@ val loaderVersion = providers.gradleProperty("loader_version")
 val fabricVersion = providers.gradleProperty("fabric_version")
 val fabricLanguageKotlinVersion = providers.gradleProperty("fabric_language_kotlin_version")
 val javaVersion = providers.gradleProperty("java_version")
-
 base.archivesName = archivesBaseName.get()
 version = modVersion.get()
 group = mavenGroup.get()
