@@ -8,23 +8,32 @@ plugins {
     id("net.darkhax.curseforgegradle")
     id("co.uzzu.dotenv.gradle")
 }
-base.archivesName = project.extra["archives_base_name"] as String
-version = project.extra["mod_version"] as String
-group = project.extra["maven_group"] as String
+val archivesBaseName = providers.gradleProperty("archives_base_name")
+val modVersion = providers.gradleProperty("mod_version")
+val mavenGroup = providers.gradleProperty("maven_group")
+val minecraftVersion = providers.gradleProperty("minecraft_version")
+val yarnMappings = providers.gradleProperty("yarn_mappings")
+val loaderVersion = providers.gradleProperty("loader_version")
+val fabricVersion = providers.gradleProperty("fabric_version")
+val fabricLanguageKotlinVersion = providers.gradleProperty("fabric_language_kotlin_version")
+val javaVersion = providers.gradleProperty("java_version")
+
+base.archivesName = archivesBaseName.get()
+version = modVersion.get()
+group = mavenGroup.get()
 dependencies {
-    minecraft("com.mojang", "minecraft", project.extra["minecraft_version"] as String)
-    mappings("net.fabricmc", "yarn", project.extra["yarn_mappings"] as String, null, "v2")
-    modImplementation("net.fabricmc", "fabric-loader", project.extra["loader_version"] as String)
-    modImplementation("net.fabricmc.fabric-api", "fabric-api", project.extra["fabric_version"] as String)
-    modImplementation("net.fabricmc", "fabric-language-kotlin", project.extra["fabric_language_kotlin_version"] as String)
+    minecraft("com.mojang:minecraft:${minecraftVersion.get()}")
+    mappings("net.fabricmc:yarn:${yarnMappings.get()}:v2")
+    modImplementation("net.fabricmc:fabric-loader:${loaderVersion.get()}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion.get()}")
+    modImplementation("net.fabricmc:fabric-language-kotlin:${fabricLanguageKotlinVersion.get()}")
 }
 tasks {
-    val javaVersion = JavaVersion.toVersion((project.extra["java_version"] as String).toInt())
     withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
-        sourceCompatibility = javaVersion.toString()
-        targetCompatibility = javaVersion.toString()
-        options.release = javaVersion.toString().toInt()
+        sourceCompatibility = javaVersion.get()
+        targetCompatibility = javaVersion.get()
+        options.release = javaVersion.get().toInt()
     }
     withType<JavaExec>().configureEach { defaultCharacterEncoding = "UTF-8" }
     withType<Javadoc>().configureEach { options.encoding = "UTF-8" }
@@ -32,37 +41,82 @@ tasks {
     withType<KotlinCompile>().configureEach {
         compilerOptions {
             extraWarnings = true
-            jvmTarget = JvmTarget.valueOf("JVM_$javaVersion")
+            jvmTarget = JvmTarget.valueOf("JVM_${javaVersion.get()}")
         }
     }
-    jar { from("LICENSE") { rename { "${it}_${base.archivesName.get()}" } } }
+    named<Jar>("jar") {
+        val rootLicense = layout.projectDirectory.file("LICENSE")
+        val parentLicense = layout.projectDirectory.file("../LICENSE")
+        val licenseFile = when {
+            rootLicense.asFile.exists() -> {
+                logger.lifecycle("Using LICENSE from project root: ${rootLicense.asFile}")
+                rootLicense
+            }
+            parentLicense.asFile.exists() -> {
+                logger.lifecycle("Using LICENSE from parent directory: ${parentLicense.asFile}")
+                parentLicense
+            }
+            else -> {
+                logger.warn("No LICENSE file found in project or parent directory.")
+                null
+            }
+        }
+        licenseFile?.let {
+            from(it) {
+                rename { original -> "${original}_${archiveBaseName.get()}" }
+            }
+        }
+    }
     processResources {
-        filesMatching("fabric.mod.json") { expand(mutableMapOf("version" to project.extra["mod_version"] as String, "fabricloader" to project.extra["loader_version"] as String, "fabric_api" to project.extra["fabric_version"] as String, "fabric_language_kotlin" to project.extra["fabric_language_kotlin_version"] as String, "minecraft" to project.extra["minecraft_version"] as String, "java" to project.extra["java_version"] as String)) }
-        filesMatching("*.mixins.json") { expand(mutableMapOf("java" to project.extra["java_version"] as String)) }
+        val stringModVersion = modVersion.get()
+        val stringLoaderVersion = loaderVersion.get()
+        val stringFabricVersion = fabricVersion.get()
+        val stringFabricLanguageKotlinVersion = fabricLanguageKotlinVersion.get()
+        val stringMinecraftVersion = minecraftVersion.get()
+        val stringJavaVersion = javaVersion.get()
+        inputs.property("modVersion", stringModVersion)
+        inputs.property("loaderVersion", stringLoaderVersion)
+        inputs.property("fabricVersion", stringFabricVersion)
+        inputs.property("fabricLanguageKotlinVersion", stringFabricLanguageKotlinVersion)
+        inputs.property("minecraftVersion", stringMinecraftVersion)
+        inputs.property("javaVersion", stringJavaVersion)
+        filesMatching("fabric.mod.json") {
+            expand(
+                mapOf(
+                    "version" to stringModVersion,
+                    "fabricloader" to stringLoaderVersion,
+                    "fabric_api" to stringFabricVersion,
+                    "fabric_language_kotlin" to stringFabricLanguageKotlinVersion,
+                    "minecraft" to stringMinecraftVersion,
+                    "java" to stringJavaVersion
+                )
+            )
+        }
+        filesMatching("*.mixins.json") { expand(mapOf("java" to stringJavaVersion)) }
     }
     java {
-        toolchain.languageVersion = JavaLanguageVersion.of(javaVersion.toString())
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
+        toolchain.languageVersion = JavaLanguageVersion.of(javaVersion.get())
+        sourceCompatibility = JavaVersion.toVersion(javaVersion.get().toInt())
+        targetCompatibility = JavaVersion.toVersion(javaVersion.get().toInt())
         withSourcesJar()
     }
     register<TaskPublishCurseForge>("publishCurseForge") {
         disableVersionDetection()
         apiToken = env.fetch("CURSEFORGE_TOKEN", "")
         val file = upload("Replace this with the CurseForge project ID as an Integer", remapJar)
-        file.displayName = "[${project.extra["minecraft_version"] as String}] Mod Name"
+        file.displayName = "[${minecraftVersion.get()}] Mod Name"
         file.addEnvironment("Client", "Server")
         file.changelog = ""
         file.releaseType = "release"
         file.addModLoader("Fabric")
-        file.addGameVersion(project.extra["minecraft_version"] as String)
+        file.addGameVersion(minecraftVersion.get())
     }
 }
 modrinth {
     token.set(env.fetch("MODRINTH_TOKEN", ""))
     projectId.set("Replace this with the slug to the Modrinth mod page")
     uploadFile.set(tasks.remapJar)
-    gameVersions.addAll(project.extra["minecraft_version"] as String)
-    versionName.set("[${project.extra["minecraft_version"] as String}] Mod Name")
+    gameVersions.addAll(minecraftVersion.get())
+    versionName.set("[${minecraftVersion.get()}] Mod Name")
     dependencies { required.project("fabric-api", "fabric-language-kotlin") }
 }
