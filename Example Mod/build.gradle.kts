@@ -58,11 +58,11 @@ tasks {
         val parentLicense = layout.projectDirectory.file("../LICENSE")
         val licenseFile = when {
             rootLicense.asFile.exists() -> {
-                logger.lifecycle("Using LICENSE from project root: ${rootLicense.asFile}")
+                logger.lifecycle("Using LICENSE from project root: ", rootLicense.asFile)
                 rootLicense
             }
             parentLicense.asFile.exists() -> {
-                logger.lifecycle("Using LICENSE from parent directory: ${parentLicense.asFile}")
+                logger.lifecycle("Using LICENSE from parent directory: {}", parentLicense.asFile)
                 parentLicense
             }
             else -> {
