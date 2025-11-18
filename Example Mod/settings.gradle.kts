@@ -18,11 +18,13 @@ pluginManagement {
     fun repoUrlWithFallbacks(candidates: List<String>): String {
         val chosenRepository = candidates.firstOrNull { isRepoHealthy(it) } ?: run {
             if (candidates.isEmpty()) {
-                logger.error("No repositories have been provided.")
+                val badLink = "https://mock.httpstatus.io/500"
+                logger.error("No repositories have been provided. Defaulting to: {}", badLink)
+                return badLink
             } else if (candidates.size == 1) {
                 logger.error("\"{}\" could not be resolved.", candidates.first())
             } else {
-                logger.error("All {} repositories could not be resolved. Defaulting to: \"{}\"", candidates.size, candidates.first())
+                logger.error("All {} repositories could not be resolved. Defaulting to: {}", candidates.size, candidates.first())
             }
             return candidates.first()
         }
