@@ -17,6 +17,7 @@ val loaderVersion = providers.gradleProperty("loader_version")
 val fabricVersion = providers.gradleProperty("fabric_version")
 val fabricLanguageKotlinVersion = providers.gradleProperty("fabric_language_kotlin_version")
 val javaVersion = providers.gradleProperty("java_version")
+val gradleJavaVersion = providers.gradleProperty("gradle_java_version")
 base.archivesName = archivesBaseName.get()
 version = modVersion.get()
 group = mavenGroup.get()
@@ -32,7 +33,11 @@ tasks {
         options.encoding = "UTF-8"
         sourceCompatibility = javaVersion.get()
         targetCompatibility = javaVersion.get()
-        options.release = javaVersion.get().toInt()
+        if (javaVersion.get().toInt() > 8) options.release = javaVersion.get().toInt()
+    }
+    named<UpdateDaemonJvm>("updateDaemonJvm") {
+        languageVersion = JavaLanguageVersion.of(gradleJavaVersion.get().toInt())
+        vendor = JvmVendorSpec.ADOPTIUM
     }
     withType<JavaExec>().configureEach { defaultCharacterEncoding = "UTF-8" }
     withType<Javadoc>().configureEach { options.encoding = "UTF-8" }
@@ -40,7 +45,7 @@ tasks {
     withType<KotlinCompile>().configureEach {
         compilerOptions {
             extraWarnings = true
-            jvmTarget = JvmTarget.valueOf("JVM_${javaVersion.get()}")
+            jvmTarget = JvmTarget.valueOf("JVM_${if (javaVersion.get() == "8") "1_8" else javaVersion.get()}")
         }
     }
     named<Jar>("jar") {
@@ -91,10 +96,13 @@ tasks {
                 )
             )
         }
-        filesMatching("*.mixins.json") { expand(mapOf("java" to stringJavaVersion)) }
+        filesMatching("**/*.mixins.json") { expand(mapOf("java" to stringJavaVersion)) }
     }
     java {
-        toolchain.languageVersion = JavaLanguageVersion.of(javaVersion.get())
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(javaVersion.get())
+            vendor = JvmVendorSpec.ADOPTIUM
+        }
         sourceCompatibility = JavaVersion.toVersion(javaVersion.get().toInt())
         targetCompatibility = JavaVersion.toVersion(javaVersion.get().toInt())
         withSourcesJar()
