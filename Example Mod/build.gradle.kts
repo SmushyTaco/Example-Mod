@@ -2,41 +2,46 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
-    id("fabric-loom")
-    kotlin("jvm")
-    id("com.modrinth.minotaur")
-    id("net.darkhax.curseforgegradle")
-    id("co.uzzu.dotenv.gradle")
+    alias(libs.plugins.loom)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.curseForgeGradle)
+    alias(libs.plugins.dotenv)
 }
 val archivesBaseName = providers.gradleProperty("archives_base_name")
 val modVersion = providers.gradleProperty("mod_version")
 val mavenGroup = providers.gradleProperty("maven_group")
-val minecraftVersion = providers.gradleProperty("minecraft_version")
-val yarnMappings = providers.gradleProperty("yarn_mappings")
-val loaderVersion = providers.gradleProperty("loader_version")
-val fabricVersion = providers.gradleProperty("fabric_version")
-val fabricLanguageKotlinVersion = providers.gradleProperty("fabric_language_kotlin_version")
-val javaVersion = providers.gradleProperty("java_version")
-val gradleJavaVersion = providers.gradleProperty("gradle_java_version")
-base.archivesName = archivesBaseName.get()
+
+val javaVersion = libs.versions.java.map { it.toInt() }
+
+base.archivesName = archivesBaseName
 version = modVersion.get()
 group = mavenGroup.get()
 dependencies {
-    minecraft("com.mojang:minecraft:${minecraftVersion.get()}")
-    mappings("net.fabricmc:yarn:${yarnMappings.get()}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${loaderVersion.get()}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricVersion.get()}")
-    modImplementation("net.fabricmc:fabric-language-kotlin:${fabricLanguageKotlinVersion.get()}")
+    minecraft(libs.minecraft)
+    mappings(variantOf(libs.yarnMappings) { classifier("v2") })
+    modImplementation(libs.loader)
+    modImplementation(libs.fabric.api)
+    modImplementation(libs.fabric.language.kotlin)
+}
+java {
+    toolchain {
+        languageVersion = javaVersion.map { JavaLanguageVersion.of(it) }
+        vendor = JvmVendorSpec.ADOPTIUM
+    }
+    sourceCompatibility = JavaVersion.toVersion(javaVersion.get())
+    targetCompatibility = JavaVersion.toVersion(javaVersion.get())
+    withSourcesJar()
 }
 tasks {
     withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
-        sourceCompatibility = javaVersion.get()
-        targetCompatibility = javaVersion.get()
-        if (javaVersion.get().toInt() > 8) options.release = javaVersion.get().toInt()
+        sourceCompatibility = javaVersion.get().toString()
+        targetCompatibility = javaVersion.get().toString()
+        if (javaVersion.get() > 8) options.release = javaVersion
     }
     named<UpdateDaemonJvm>("updateDaemonJvm") {
-        languageVersion = JavaLanguageVersion.of(gradleJavaVersion.get().toInt())
+        languageVersion = libs.versions.gradleJava.map { JavaLanguageVersion.of(it.toInt()) }
         vendor = JvmVendorSpec.ADOPTIUM
     }
     withType<JavaExec>().configureEach { defaultCharacterEncoding = "UTF-8" }
@@ -45,7 +50,7 @@ tasks {
     withType<KotlinCompile>().configureEach {
         compilerOptions {
             extraWarnings = true
-            jvmTarget = JvmTarget.valueOf("JVM_${if (javaVersion.get() == "8") "1_8" else javaVersion.get()}")
+            jvmTarget = javaVersion.map { JvmTarget.valueOf("JVM_${if (it == 8) "1_8" else it}") }
         }
     }
     named<Jar>("jar") {
@@ -73,11 +78,11 @@ tasks {
     }
     processResources {
         val stringModVersion = modVersion.get()
-        val stringLoaderVersion = loaderVersion.get()
-        val stringFabricVersion = fabricVersion.get()
-        val stringFabricLanguageKotlinVersion = fabricLanguageKotlinVersion.get()
-        val stringMinecraftVersion = minecraftVersion.get()
-        val stringJavaVersion = javaVersion.get()
+        val stringLoaderVersion = libs.versions.loader.get()
+        val stringFabricVersion = libs.versions.fabric.api.get()
+        val stringFabricLanguageKotlinVersion = libs.versions.fabric.language.kotlin.get()
+        val stringMinecraftVersion = libs.versions.minecraft.get()
+        val stringJavaVersion = libs.versions.java.get()
         inputs.property("modVersion", stringModVersion)
         inputs.property("loaderVersion", stringLoaderVersion)
         inputs.property("fabricVersion", stringFabricVersion)
@@ -98,32 +103,23 @@ tasks {
         }
         filesMatching("**/*.mixins.json") { expand(mapOf("java" to stringJavaVersion)) }
     }
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(javaVersion.get())
-            vendor = JvmVendorSpec.ADOPTIUM
-        }
-        sourceCompatibility = JavaVersion.toVersion(javaVersion.get().toInt())
-        targetCompatibility = JavaVersion.toVersion(javaVersion.get().toInt())
-        withSourcesJar()
-    }
     register<TaskPublishCurseForge>("publishCurseForge") {
         disableVersionDetection()
         apiToken = env.fetch("CURSEFORGE_TOKEN", "")
         val file = upload("Replace this with the CurseForge project ID as an Integer", remapJar)
-        file.displayName = "[${minecraftVersion.get()}] Mod Name"
+        file.displayName = "[${libs.versions.minecraft.get()}] Mod Name"
         file.addEnvironment("Client", "Server")
         file.changelog = ""
         file.releaseType = "release"
         file.addModLoader("Fabric")
-        file.addGameVersion(minecraftVersion.get())
+        file.addGameVersion(libs.versions.minecraft.get())
     }
 }
 modrinth {
-    token.set(env.fetch("MODRINTH_TOKEN", ""))
-    projectId.set("Replace this with the slug to the Modrinth mod page")
+    token = env.fetch("MODRINTH_TOKEN", "")
+    projectId = "Replace this with the slug to the Modrinth mod page"
     uploadFile.set(tasks.remapJar)
-    gameVersions.addAll(minecraftVersion.get())
-    versionName.set("[${minecraftVersion.get()}] Mod Name")
+    gameVersions.add(libs.versions.minecraft)
+    versionName = libs.versions.minecraft.map { "[$it] Mod Name" }
     dependencies { required.project("fabric-api", "fabric-language-kotlin") }
 }

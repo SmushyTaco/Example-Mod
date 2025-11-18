@@ -1,0 +1,45 @@
+[versions]
+##########################################################################
+# Plugins
+# Check this on https://github.com/FabricMC/fabric-loom/releases/latest/
+loom = "1.13-SNAPSHOT"
+# Check this on https://kotlinlang.org/docs/releases.html
+kotlin = "2.2.21"
+# Check this on https://plugins.gradle.org/plugin/com.modrinth.minotaur/
+minotaur = "2.8.10"
+# Check this on https://plugins.gradle.org/plugin/net.darkhax.curseforgegradle/
+curseForgeGradle = "1.1.28"
+# Check this on https://plugins.gradle.org/plugin/co.uzzu.dotenv.gradle/
+dotenv = "4.0.0"
+##########################################################################
+# Java Configuration
+# The Java version the JDK will be for compiling and running code.
+java = "21"
+# The Java version the JDK will be for running Gradle.
+gradleJava = "21"
+##########################################################################
+# Dependencies
+minecraft = "1.21.10"
+# Check this on https://fabricmc.net/develop/
+yarnMappings = "1.21.10+build.2"
+# Check this on https://github.com/FabricMC/fabric-loader/releases/latest
+loader = "0.18.0"
+# Check this on https://modrinth.com/mod/fabric-api/versions/
+fabric-api = "0.138.3+1.21.10"
+# Check this on https://modrinth.com/mod/fabric-language-kotlin/versions/
+fabric-language-kotlin = "1.13.7+kotlin.2.2.21"
+##########################################################################
+
+[libraries]
+minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
+yarnMappings = { group = "net.fabricmc", name = "yarn", version.ref = "yarnMappings" }
+loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "loader" }
+fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
+fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
+
+[plugins]
+loom = { id = "fabric-loom", version.ref = "loom" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
+curseForgeGradle = { id = "net.darkhax.curseforgegradle", version.ref = "curseForgeGradle" }
+dotenv = { id = "co.uzzu.dotenv.gradle", version.ref = "dotenv" }
