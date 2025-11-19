@@ -104,6 +104,7 @@ tasks {
         filesMatching("**/*.mixins.json") { expand(mapOf("java" to stringJavaVersion)) }
     }
     register<TaskPublishCurseForge>("publishCurseForge") {
+        group = "publishing"
         disableVersionDetection()
         apiToken = env.fetch("CURSEFORGE_TOKEN", "")
         val file = upload("Replace this with the CurseForge project ID as an Integer", remapJar)
