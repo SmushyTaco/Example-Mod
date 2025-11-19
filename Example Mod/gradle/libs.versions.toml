@@ -39,7 +39,7 @@ fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotli
 
 [plugins]
 loom = { id = "fabric-loom", version.ref = "loom" }
-kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
 curseForgeGradle = { id = "net.darkhax.curseforgegradle", version.ref = "curseForgeGradle" }
 dotenv = { id = "co.uzzu.dotenv.gradle", version.ref = "dotenv" }

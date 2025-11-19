@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.loom)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseForgeGradle)
     alias(libs.plugins.dotenv)
