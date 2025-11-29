@@ -20,8 +20,6 @@ gradleJava = "21"
 ##########################################################################
 # Dependencies
 minecraft = "1.21.10"
-# Check this on https://fabricmc.net/develop/
-yarnMappings = "1.21.10+build.3"
 # Check this on https://github.com/FabricMC/fabric-loader/releases/latest
 loader = "0.18.1"
 # Check this on https://modrinth.com/mod/fabric-api/versions/
@@ -32,7 +30,6 @@ fabric-language-kotlin = "1.13.7+kotlin.2.2.21"
 
 [libraries]
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
-yarnMappings = { group = "net.fabricmc", name = "yarn", version.ref = "yarnMappings" }
 loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "loader" }
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }

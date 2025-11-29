@@ -19,7 +19,7 @@ version = modVersion.get()
 group = mavenGroup.get()
 dependencies {
     minecraft(libs.minecraft)
-    mappings(variantOf(libs.yarnMappings) { classifier("v2") })
+    mappings(loom.officialMojangMappings())
     modImplementation(libs.loader)
     modImplementation(libs.fabric.api)
     modImplementation(libs.fabric.language.kotlin)
@@ -79,31 +79,17 @@ tasks {
         }
     }
     processResources {
-        val stringModVersion = modVersion.get()
-        val stringLoaderVersion = libs.versions.loader.get()
-        val stringFabricVersion = libs.versions.fabric.api.get()
-        val stringFabricLanguageKotlinVersion = libs.versions.fabric.language.kotlin.get()
-        val stringMinecraftVersion = libs.versions.minecraft.get()
-        val stringJavaVersion = libs.versions.java.get()
-        inputs.property("modVersion", stringModVersion)
-        inputs.property("loaderVersion", stringLoaderVersion)
-        inputs.property("fabricVersion", stringFabricVersion)
-        inputs.property("fabricLanguageKotlinVersion", stringFabricLanguageKotlinVersion)
-        inputs.property("minecraftVersion", stringMinecraftVersion)
-        inputs.property("javaVersion", stringJavaVersion)
-        filesMatching("fabric.mod.json") {
-            expand(
-                mapOf(
-                    "version" to stringModVersion,
-                    "fabricloader" to stringLoaderVersion,
-                    "fabric_api" to stringFabricVersion,
-                    "fabric_language_kotlin" to stringFabricLanguageKotlinVersion,
-                    "minecraft" to stringMinecraftVersion,
-                    "java" to stringJavaVersion
-                )
-            )
-        }
-        filesMatching("**/*.mixins.json") { expand(mapOf("java" to stringJavaVersion)) }
+        val resourceMap = mapOf(
+            "version" to modVersion.get(),
+            "fabricloader" to libs.versions.loader.get(),
+            "fabric_api" to libs.versions.fabric.api.get(),
+            "fabric_language_kotlin" to libs.versions.fabric.language.kotlin.get(),
+            "minecraft" to libs.versions.minecraft.get(),
+            "java" to libs.versions.java.get()
+        )
+        inputs.properties(resourceMap)
+        filesMatching("fabric.mod.json") { expand(resourceMap) }
+        filesMatching("**/*.mixins.json") { expand(resourceMap.filterKeys { it == "java" }) }
     }
     register<TaskPublishCurseForge>("publishCurseForge") {
         group = "publishing"
