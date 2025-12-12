@@ -19,7 +19,7 @@ java = "21"
 gradleJava = "21"
 ##########################################################################
 # Dependencies
-minecraft = "1.21.10"
+minecraft = "1.21.11"
 # Check this on https://github.com/FabricMC/fabric-loader/releases/latest
 loader = "0.18.2"
 # Check this on https://modrinth.com/mod/fabric-api/versions/
