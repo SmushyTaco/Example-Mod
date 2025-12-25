@@ -8,11 +8,11 @@ plugins {
     alias(libs.plugins.curseForgeGradle)
     alias(libs.plugins.dotenv)
 }
-val archivesBaseName = providers.gradleProperty("archives_base_name")
-val modVersion = providers.gradleProperty("mod_version")
-val mavenGroup = providers.gradleProperty("maven_group")
+val archivesBaseName: Provider<String> = providers.gradleProperty("archives_base_name")
+val modVersion: Provider<String> = providers.gradleProperty("mod_version")
+val mavenGroup: Provider<String> = providers.gradleProperty("maven_group")
 
-val javaVersion = libs.versions.java.map { it.toInt() }
+val javaVersion: Provider<Int> = libs.versions.java.map { it.toInt() }
 
 base.archivesName = archivesBaseName
 version = modVersion.get()
