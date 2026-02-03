@@ -1,4 +1,4 @@
-val archivesBaseName = providers.gradleProperty("archives_base_name")
+val archivesBaseName: Provider<String> = providers.gradleProperty("archives_base_name")
 rootProject.name = archivesBaseName.get()
 pluginManagement {
     fun isRepoHealthy(url: String): Boolean {
