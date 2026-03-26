@@ -8,7 +8,7 @@ kotlin = "2.3.20"
 # Check this on https://plugins.gradle.org/plugin/com.modrinth.minotaur/
 minotaur = "2.9.0"
 # Check this on https://plugins.gradle.org/plugin/net.darkhax.curseforgegradle/
-curseForgeGradle = "1.1.28"
+curseForgeGradle = "1.2.30"
 # Check this on https://plugins.gradle.org/plugin/co.uzzu.dotenv.gradle/
 dotenv = "4.0.0"
 ##########################################################################
