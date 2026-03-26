@@ -4,9 +4,9 @@
 # Check this on https://github.com/FabricMC/fabric-loom/releases/latest/
 loom = "1.15-SNAPSHOT"
 # Check this on https://kotlinlang.org/docs/releases.html
-kotlin = "2.3.0"
+kotlin = "2.3.20"
 # Check this on https://plugins.gradle.org/plugin/com.modrinth.minotaur/
-minotaur = "2.8.10"
+minotaur = "2.9.0"
 # Check this on https://plugins.gradle.org/plugin/net.darkhax.curseforgegradle/
 curseForgeGradle = "1.1.28"
 # Check this on https://plugins.gradle.org/plugin/co.uzzu.dotenv.gradle/
@@ -14,18 +14,18 @@ dotenv = "4.0.0"
 ##########################################################################
 # Java Configuration
 # The Java version the JDK will be for compiling and running code.
-java = "21"
+java = "25"
 # The Java version the JDK will be for running Gradle.
-gradleJava = "21"
+gradleJava = "25"
 ##########################################################################
 # Dependencies
-minecraft = "1.21.11"
+minecraft = "26.1"
 # Check this on https://github.com/FabricMC/fabric-loader/releases/latest
-loader = "0.18.4"
+loader = "0.18.5"
 # Check this on https://modrinth.com/mod/fabric-api/versions/
-fabric-api = "0.141.2+1.21.11"
+fabric-api = "0.144.3+26.1"
 # Check this on https://modrinth.com/mod/fabric-language-kotlin/versions/
-fabric-language-kotlin = "1.13.8+kotlin.2.3.0"
+fabric-language-kotlin = "1.13.10+kotlin.2.3.20"
 ##########################################################################
 
 [libraries]
@@ -35,7 +35,7 @@ fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.r
 fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
 
 [plugins]
-loom = { id = "net.fabricmc.fabric-loom-remap", version.ref = "loom" }
+loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
 curseForgeGradle = { id = "net.darkhax.curseforgegradle", version.ref = "curseForgeGradle" }

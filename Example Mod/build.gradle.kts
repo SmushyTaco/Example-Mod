@@ -19,10 +19,9 @@ version = modVersion.get()
 group = mavenGroup.get()
 dependencies {
     minecraft(libs.minecraft)
-    mappings(loom.officialMojangMappings())
-    modImplementation(libs.loader)
-    modImplementation(libs.fabric.api)
-    modImplementation(libs.fabric.language.kotlin)
+    implementation(libs.loader)
+    implementation(libs.fabric.api)
+    implementation(libs.fabric.language.kotlin)
 }
 java {
     toolchain {
@@ -95,7 +94,7 @@ tasks {
         group = "publishing"
         disableVersionDetection()
         apiToken = env.fetch("CURSEFORGE_TOKEN", "")
-        val file = upload("Replace this with the CurseForge project ID as an Integer", remapJar)
+        val file = upload("Replace this with the CurseForge project ID as an Integer", jar)
         file.displayName = "[${libs.versions.minecraft.get()}] Mod Name"
         file.addEnvironment("Client", "Server")
         file.changelog = ""
@@ -107,7 +106,7 @@ tasks {
 modrinth {
     token = env.fetch("MODRINTH_TOKEN", "")
     projectId = "Replace this with the slug to the Modrinth mod page"
-    uploadFile.set(tasks.remapJar)
+    uploadFile.set(tasks.jar)
     gameVersions.add(libs.versions.minecraft)
     versionName = libs.versions.minecraft.map { "[$it] Mod Name" }
     dependencies { required.project("fabric-api", "fabric-language-kotlin") }
