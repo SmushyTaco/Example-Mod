@@ -57,7 +57,7 @@ tasks {
         targetCompatibility = javaVersion.get().toString()
         if (javaVersion.get() > 8) options.release = javaVersion
     }
-    named<UpdateDaemonJvm>("updateDaemonJvm") {
+    withType<UpdateDaemonJvm>().configureEach {
         languageVersion = libs.versions.gradleJava.map { JavaLanguageVersion.of(it.toInt()) }
         vendor = JvmVendorSpec.ADOPTIUM
     }

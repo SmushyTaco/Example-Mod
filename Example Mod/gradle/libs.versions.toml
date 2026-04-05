@@ -19,11 +19,11 @@ java = "25"
 gradleJava = "25"
 ##########################################################################
 # Dependencies
-minecraft = "26.1"
+minecraft = "26.1.1"
 # Check this on https://github.com/FabricMC/fabric-loader/releases/latest
-loader = "0.18.5"
+loader = "0.18.6"
 # Check this on https://modrinth.com/mod/fabric-api/versions/
-fabric-api = "0.144.3+26.1"
+fabric-api = "0.145.3+26.1.1"
 # Check this on https://modrinth.com/mod/fabric-language-kotlin/versions/
 fabric-language-kotlin = "1.13.10+kotlin.2.3.20"
 ##########################################################################
