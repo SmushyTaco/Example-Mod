@@ -26,7 +26,10 @@ class Profile(val name: String, val id: String)
 
 val prismAccountsFile = providers.provider {
     val explicit = providers.gradleProperty("prism.accounts.file").orNull
-    if (explicit != null) return@provider File(explicit)
+    if (explicit != null) {
+        val explicitFile = File(explicit)
+        if (explicitFile.exists()) return@provider explicitFile
+    }
 
     val home = System.getProperty("user.home")
 
