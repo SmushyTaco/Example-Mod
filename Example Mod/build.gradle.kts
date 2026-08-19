@@ -61,9 +61,9 @@ loom {
                 }
             register("clientAuth") {
                 inherit(getByName("client"))
-                configName = "Minecraft Client (Auth)"
+                displayName = "Minecraft Client (Auth)"
                 val acc = account.get()
-                programArgs("--username", acc.profile.name, "--uuid", acc.profile.id, "--accessToken", acc.ygg.token)
+                programArguments.addAll("--username", acc.profile.name, "--uuid", acc.profile.id, "--accessToken", acc.ygg.token)
             }
         }
     }
@@ -143,6 +143,7 @@ tasks {
         filesMatching("**/*.mixins.json") { expand(resourceMap.filterKeys { it == "java" }) }
     }
     register<TaskPublishCurseForge>("publishCurseForge") {
+        description = "Publish to CurseForge."
         group = "publishing"
         disableVersionDetection()
         apiToken = env.fetch("CURSEFORGE_TOKEN", "")
