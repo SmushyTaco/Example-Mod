@@ -118,6 +118,7 @@ tasks {
     withType<Test>().configureEach { defaultCharacterEncoding = "UTF-8" }
     withType<KotlinCompile>().configureEach {
         compilerOptions {
+            moduleName = project.name
             extraWarnings = true
             jvmTarget = javaVersion.map { JvmTarget.valueOf("JVM_${if (it == 8) "1_8" else it}") }
         }
@@ -146,7 +147,7 @@ tasks {
         description = "Publish to CurseForge."
         group = "publishing"
         disableVersionDetection()
-        apiToken = env.fetch("CURSEFORGE_TOKEN", "")
+        apiToken = env.fetch("CURSEFORGE_TOKEN").getOrElse("")
         val file = upload("Replace this with the CurseForge project ID as an Integer", jar)
         file.displayName = "[${libs.versions.minecraft.get()}] Mod Name"
         file.addEnvironment("Client", "Server")
@@ -157,7 +158,7 @@ tasks {
     }
 }
 modrinth {
-    token = env.fetch("MODRINTH_TOKEN", "")
+    token = env.fetch("MODRINTH_TOKEN").orElse("")
     projectId = "Replace this with the slug to the Modrinth mod page"
     uploadFile.set(tasks.jar)
     gameVersions.add(libs.versions.minecraft)
